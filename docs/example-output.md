@@ -22,7 +22,7 @@ INFO    github_analytics.extract.extractors: extracting repository repository=ps
 INFO    github_analytics.extract.extractors: extraction complete run_id=live_demo_1 repositories=1 commits=1 pull_requests=10 reviews=19 issues=16 api_requests=14
 INFO    github_analytics.pipeline: transform complete run_id=live_demo_1 repositories=1 contributors=29 commits=1 pull_requests=10 reviews=19 issues=16
 INFO    github_analytics.load.postgres: load committed run_id=live_demo_1 repositories=1 contributors=29 commits=1 pull_requests=10 reviews=19 issues=16 watermarks_updated=3
-INFO    github_analytics.analytics.report: report written path=C:\Users\ABHISH~1\AppData\Local\Temp\p2reports\live_demo_1\report.md queries=10
+INFO    github_analytics.analytics.report: report written path=<tmp>/p2reports/live_demo_1/report.md queries=10
 INFO    github_analytics.pipeline: pipeline completed run_id=live_demo_1
 ```
 
@@ -57,7 +57,7 @@ INFO    github_analytics.extract.extractors: extracting repository repository=ps
 INFO    github_analytics.extract.extractors: extraction complete run_id=live_demo_2 repositories=1 commits=1 pull_requests=1 reviews=0 issues=1 api_requests=5
 INFO    github_analytics.pipeline: transform complete run_id=live_demo_2 repositories=1 contributors=4 commits=1 pull_requests=1 reviews=0 issues=1
 INFO    github_analytics.load.postgres: load committed run_id=live_demo_2 repositories=1 contributors=4 commits=1 pull_requests=1 reviews=0 issues=1 watermarks_updated=3
-INFO    github_analytics.analytics.report: report written path=C:\Users\ABHISH~1\AppData\Local\Temp\p2reports\live_demo_2\report.md queries=10
+INFO    github_analytics.analytics.report: report written path=<tmp>/p2reports/live_demo_2/report.md queries=10
 INFO    github_analytics.pipeline: pipeline completed run_id=live_demo_2
 ```
 
