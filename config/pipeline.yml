@@ -1,0 +1,31 @@
+# Non-secret pipeline configuration. Environment variables override these
+# values (see .env.example). The GitHub token is only ever read from GITHUB_TOKEN.
+
+github:
+  api_url: https://api.github.com
+  # Explicit list of repositories to analyse ("owner/name")...
+  repositories:
+    - psf/requests
+  # ...or discover every repository of an owner (used when the list is empty):
+  # owner: my-org
+  # owner_type: org          # org | user
+  include_forks: false
+
+extraction:
+  # First run for a repository/entity goes back this many days.
+  initial_lookback_days: 30
+  # Re-read this much before the stored watermark to catch late updates;
+  # upserts make the overlap harmless.
+  watermark_overlap_minutes: 60
+  # Safety cap per endpoint and repository.
+  max_pages: 50
+  request_timeout_seconds: 30
+  max_retries: 5
+  max_rate_limit_wait_seconds: 900
+
+quality:
+  # Fail the validate step if more than this share of raw records is invalid.
+  max_invalid_ratio: 0.05
+
+data_dir: data
+reports_dir: reports
