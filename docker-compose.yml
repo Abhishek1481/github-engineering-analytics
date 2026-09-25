@@ -1,0 +1,68 @@
+# Local Airflow + PostgreSQL environment for the GitHub analytics pipeline.
+#
+#   cp .env.example .env          # set POSTGRES_PASSWORD and (recommended) GITHUB_TOKEN
+#   docker compose up -d --build
+#   open http://localhost:8080    # local-only: every user is admin (see README)
+#   docker compose exec airflow airflow dags unpause github_engineering_analytics
+#   docker compose exec airflow airflow dags trigger github_engineering_analytics
+
+name: github-analytics
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: airflow
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  airflow:
+    build: .
+    # Single-container Airflow (api-server, scheduler, dag-processor, triggerer)
+    # for local development. Production would run these as separate services.
+    command: standalone
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      # LOCAL DEVELOPMENT ONLY: disables login. Never expose this port publicly.
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
+      GITHUB_ANALYTICS_SCHEDULE: ${GITHUB_ANALYTICS_SCHEDULE:-@daily}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_REPOSITORIES: ${GITHUB_REPOSITORIES:-}
+      GITHUB_OWNER: ${GITHUB_OWNER:-}
+      GITHUB_OWNER_TYPE: ${GITHUB_OWNER_TYPE:-org}
+      GITHUB_INITIAL_LOOKBACK_DAYS: ${GITHUB_INITIAL_LOOKBACK_DAYS:-30}
+      ANALYTICS_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/github_analytics
+      DATA_DIR: /opt/airflow/pipeline-data
+      REPORTS_DIR: /opt/airflow/reports
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags:ro
+      - ./reports:/opt/airflow/reports
+      - pipeline-data:/opt/airflow/pipeline-data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/v2/monitor/health > /dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+volumes:
+  pgdata:
+  pipeline-data:
