@@ -1,5 +1,7 @@
 # GitHub Engineering Activity Analytics
 
+[![ci](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+
 An **incremental ETL/ELT pipeline**. It pulls commits, pull requests, reviews and issues from the **GitHub REST API**, lands the raw JSON, validates and transforms it with **Python/pandas**, and loads a **PostgreSQL star schema**. SQL on top of that schema answers engineering-metrics questions such as PR cycle time, review turnaround, weekly throughput and issue backlog. **Apache Airflow** orchestrates the whole run.
 
 > **Status: local development / demonstration environment.**
@@ -128,8 +130,8 @@ erDiagram
 ## 6. Installation
 
 ```bash
-git clone <your-fork-url> data-engineering-portfolio
-cd data-engineering-portfolio/project-2-github-engineering-analytics
+git clone https://github.com/<your-username>/github-engineering-analytics.git
+cd github-engineering-analytics
 uv sync
 ```
 
@@ -291,7 +293,7 @@ No benchmarks were run. This is a design discussion.
 ## Repository layout
 
 ```text
-project-2-github-engineering-analytics/
+github-engineering-analytics/
 ├── dags/github_analytics_dag.py
 ├── src/github_analytics/
 │   ├── extract/     client.py (HTTP, retries, rate limits, pagination), extractors.py, raw_store.py
@@ -308,4 +310,4 @@ project-2-github-engineering-analytics/
 └── docs/            interview-notes.md, example-output.md
 ```
 
-More: [docs/interview-notes.md](docs/interview-notes.md)
+More: [docs/interview-notes.md](docs/interview-notes.md) · [docs/resume-bullets.md](docs/resume-bullets.md)
